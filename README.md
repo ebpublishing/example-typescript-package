@@ -133,9 +133,9 @@ On the page of your newly created or existing GitHub repo, click **Settings** ->
 
 #### CI publishing to GitHub Packages
 
-The default configuration of this example package **assumes you publish package with an unscoped name to npm**. GitHub Packages must be named with a scope name such as "@tomchen/example-typescript-package".
+The default configuration of this example package **assumes you publish package with an unscoped name to npm**. GitHub Packages must be named with a scope name such as "@ebpublishing/example-typescript-package".
 
-Change `scope: '@tomchen'` to your own scope in **.github/workflows/publish.yml**, also change `addscope` in **package.json**.
+Change `scope: '@ebpublishing'` to your own scope in **.github/workflows/publish.yml**, also change `addscope` in **package.json**.
 
 If you publish package with a scoped name to npm, change the name to something like "@tomchen/example-typescript-package" in **package.json**, and remove the `- run: npm run addscope` line in **.github/workflows/publish.yml**
 
