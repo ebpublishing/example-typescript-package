@@ -18,8 +18,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
-          tag_name: "broyden_tag3"
-          release_name: "broyden_release3"
+          tag_name: "broyden_tag4"
+          release_name: "broyden_release5"
           draft: false
           prerelease: false
 
@@ -30,7 +30,7 @@ jobs:
       - name: Setup .npmrc file to publish to npm
         uses: actions/setup-node@v1
         with:
-          node-version: '14.x'
+          node-version: '18.x'
           registry-url: 'https://registry.npmjs.org'
       - name: Install modules
         run: npm install
@@ -39,7 +39,7 @@ jobs:
       - name: Setup .npmrc file to publish to GitHub Packages
         uses: actions/setup-node@v1
         with:
-          node-version: '14.x'
+          node-version: '18.x'
           registry-url: 'https://npm.pkg.github.com'
           scope: '@ebpublishing'
       - run: npm run addscope
