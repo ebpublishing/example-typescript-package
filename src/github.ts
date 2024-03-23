@@ -54,13 +54,13 @@ export async function getOrganizationRepositories(octokit: Octokit, organization
     return properties;
   }
   
-  async function createRepositoryEnvironments(octokit: Octokit, organization_name: string, repos: github_repo_info[], environment_name: string) {
+  export async function createRepositoryEnvironments(octokit: Octokit, organization_name: string, repos: github_repo_info[], environment_name: string) {
       for(const repo of repos) {
           createRepositoryEnvironment(octokit, organization_name, repo.name, environment_name);
       }
   }
   
-  async function createRepositoryEnvironment(octokit: Octokit, organization_name: string, repository_name: string, environment_name: string) {
+  export async function createRepositoryEnvironment(octokit: Octokit, organization_name: string, repository_name: string, environment_name: string) {
       const response = await octokit.request(`PUT /repos/${organization_name}/${repository_name}/environments/${environment_name}`, {
           headers: {
             'X-GitHub-Api-Version': '2022-11-28'
@@ -68,7 +68,7 @@ export async function getOrganizationRepositories(octokit: Octokit, organization
       });
   }
   
-  async function getOrganizatonPublicKey(octokit: Octokit, organization_name: string): Promise<public_key_info> {
+  export async function getOrganizatonPublicKey(octokit: Octokit, organization_name: string): Promise<public_key_info> {
       const results = await octokit.request(`GET /orgs/${organization_name}/actions/secrets/public-key`, {
           org: 'ORG',
           headers: {
@@ -79,7 +79,7 @@ export async function getOrganizationRepositories(octokit: Octokit, organization
       return results.data;
   }
   
-  async function getRepositoryEnvironmentPublicKeys(octokit: Octokit, organization_name: string, repositories: github_repo_info[], environment_name: string): Promise<RepositoryPublicKeyInfoCollection> {
+  export async function getRepositoryEnvironmentPublicKeys(octokit: Octokit, organization_name: string, repositories: github_repo_info[], environment_name: string): Promise<RepositoryPublicKeyInfoCollection> {
     const collection = new RepositoryPublicKeyInfoCollection();
   
     for (const repository of repositories) {
@@ -90,7 +90,7 @@ export async function getOrganizationRepositories(octokit: Octokit, organization
     return collection;
   }
   
-  async function getRepositoryEnvironmentPublicKey(octokit: Octokit, organization_name: string, repository_name: string, environment_name: string): Promise<public_key_info> {
+  export async function getRepositoryEnvironmentPublicKey(octokit: Octokit, organization_name: string, repository_name: string, environment_name: string): Promise<public_key_info> {
     // https://docs.github.com/en/rest/actions/secrets?apiVersion=2022-11-28#get-an-environment-public-key
     const results = await octokit.request(`GET /repos/${organization_name}/${repository_name}/environments/${environment_name}/secrets/public-key`, {
         headers: {
@@ -103,7 +103,7 @@ export async function getOrganizationRepositories(octokit: Octokit, organization
     return results.data;
   }
   
-  async function createRepositoryEnvironmentVariables(octokit: Octokit, repos: github_repo_info[], environment_name: string, variable_name: string, variable_value: string) {
+  export async function createRepositoryEnvironmentVariables(octokit: Octokit, repos: github_repo_info[], environment_name: string, variable_name: string, variable_value: string) {
     
     for(const repo of repos) {
       if(await hasRepositoryEnvironmentVariables(octokit, variable_name, repo.id, environment_name)) {
@@ -114,7 +114,7 @@ export async function getOrganizationRepositories(octokit: Octokit, organization
     }
   }
   
-  async function createRepositoryEnvironmentVariable(octokit: Octokit, repository_id: number, environment_name: string, variable_name: string, variable_value: string) {
+  export async function createRepositoryEnvironmentVariable(octokit: Octokit, repository_id: number, environment_name: string, variable_name: string, variable_value: string) {
       await octokit.request(`POST /repositories/${repository_id}/environments/${environment_name}/variables`, {
           repository_id: 'REPOSITORY_ID',
           environment_name: 'ENVIRONMENT_NAME',
@@ -126,7 +126,7 @@ export async function getOrganizationRepositories(octokit: Octokit, organization
         });
   }
   
-  async function updateRepositoryEnvironmentVariable(octokit: Octokit, repository_id: number, environment_name: string, variable_name: string, variable_value: string) {
+  export async function updateRepositoryEnvironmentVariable(octokit: Octokit, repository_id: number, environment_name: string, variable_name: string, variable_value: string) {
       await octokit.request(`PATCH /repositories/${repository_id}/environments/${environment_name}/variables/${variable_name}`, {
           name: variable_name,
           value: variable_value,
@@ -137,17 +137,17 @@ export async function getOrganizationRepositories(octokit: Octokit, organization
         
   }
   
-  async function createRepositoryEnvironmentSecrets(octokit: Octokit, repos: github_repo_info[], repository_public_key_info: RepositoryPublicKeyInfoCollection, organization_name: string, environment_name: string, secret_name: string, secret_value: string) {
+  export async function createRepositoryEnvironmentSecrets(octokit: Octokit, repos: github_repo_info[], repository_public_key_info: RepositoryPublicKeyInfoCollection, organization_name: string, environment_name: string, secret_name: string, secret_value: string) {
       for(const repo of repos) {
           const key_info = repository_public_key_info.get(repo.name);
           if(key_info) {
             const encrypted_secret_value = await encrypt(secret_value, key_info.key);
-            await createRepositoryEnvironmentSecret(octokit, repo, organization_name, environment_name, secret_name, encrypted_secret_value, key_info.key_id);
+            await createRepositoryEnvironmentSecret(octokit, repo, environment_name, secret_name, encrypted_secret_value, key_info.key_id);
           }
       }
   }
   
-  async function createRepositoryEnvironmentSecret(octokit: Octokit, repo: github_repo_info, organization_name: string, environment_name: string, secret_name: string, secret_value: string, encryption_key_id: string) {
+  export async function createRepositoryEnvironmentSecret(octokit: Octokit, repo: github_repo_info, environment_name: string, secret_name: string, secret_value: string, encryption_key_id: string) {
     //https://docs.github.com/en/rest/actions/secrets?apiVersion=2022-11-28#create-or-update-an-environment-secret
     const response = await octokit.request(`PUT /repositories/${repo.id}/environments/${environment_name}/secrets/${secret_name}`, {
       encrypted_value: secret_value,
@@ -156,14 +156,9 @@ export async function getOrganizationRepositories(octokit: Octokit, organization
         'X-GitHub-Api-Version': '2022-11-28'
       }
     });
-    // console.log(repo.name.repeat(5));
-    //// console.log(JSON.stringify(response));
-    // console.log(`encrypted_value: ${secret_value}`);
-    // console.log(`key_id: ${encryption_key_id}`);
-    // console.log(repo.name.repeat(5));
   }
   
-  async function hasRepositoryEnvironmentVariables(octokit: Octokit, variable_name: string, repository_id: number, environment_name: string): Promise<boolean> {
+  export async function hasRepositoryEnvironmentVariables(octokit: Octokit, variable_name: string, repository_id: number, environment_name: string): Promise<boolean> {
     try {
       const variables = await getRepositoryEnvironmentVariables(octokit, repository_id, environment_name);
       const results = variables.filter((obj) => obj.name === variable_name);
@@ -174,7 +169,7 @@ export async function getOrganizationRepositories(octokit: Octokit, organization
     }
   }
   
-   async function getRepositoryEnvironmentVariables(octokit: Octokit, repository_id: number, environment_name: string):Promise<repo_variable_info[]> {
+  export async function getRepositoryEnvironmentVariables(octokit: Octokit, repository_id: number, environment_name: string):Promise<repo_variable_info[]> {
       const results = await octokit.request(`GET /repositories/${repository_id}/environments/${environment_name}/variables?per_page=30`, {
           headers: {
             'X-GitHub-Api-Version': '2022-11-28'
@@ -185,22 +180,22 @@ export async function getOrganizationRepositories(octokit: Octokit, organization
       return results.data.variables;
    }
   
-  type github_repo_info = {
+  export type github_repo_info = {
       id: number;
       name: string;
   };
   
-  type repo_variable_info = {
+  export type repo_variable_info = {
       name: string;
       value: string;
   }
   
-  type public_key_info = {
+  export type public_key_info = {
       key_id: string,
       key: string
   }
   
-  class RepositoryPublicKeyInfoCollection {
+  export class RepositoryPublicKeyInfoCollection {
     private _map: Map<string, public_key_info>;
   
     constructor() {
