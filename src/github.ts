@@ -28,7 +28,7 @@ export async function getOrganizationEnviromentVariables(octokit: Octokit, organ
     }
   });
 
-  return results.data;
+  return results.data.variables;
 }
 
 export async function createOrganizationEnvironmentVariables(octokit: Octokit, organization_name: string, vars: repo_variable_info[]): Promise<void> {
