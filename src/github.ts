@@ -1,5 +1,72 @@
 import { Octokit, App } from "octokit";
 import { encrypt } from "./encrypt";
+
+export async function setOrganizationEnvironmentVariables(octokit: Octokit, organization_name: string, vars: repo_variable_info[]): Promise<void> {
+  const variables_to_create: repo_variable_info[] = [];
+  const variables_to_update: repo_variable_info[] = [];
+
+  const environment_variables = await getOrganizationEnviromentVariables(octokit, organization_name);
+
+  for (const var_info of vars) {
+    if (environment_variables.filter((env_var) => { env_var.name === var_info.name}).length > 0) {
+      variables_to_update.push(var_info);
+    } else {
+      variables_to_create.push(var_info);
+    }
+  }
+
+  await createOrganizationEnvironmentVariables(octokit, organization_name, variables_to_create);
+  await updateOrganizationEnvironmentVariables(octokit, organization_name, variables_to_update);
+
+}
+
+export async function getOrganizationEnviromentVariables(octokit: Octokit, organization_name: string): Promise<environment_variable[]> {
+  const results = await octokit.request(`GET /orgs/${organization_name}/actions/variables`, {
+    org: 'ORG',
+    headers: {
+      'X-GitHub-Api-Version': '2022-11-28'
+    }
+  });
+
+  return results.data;
+}
+
+export async function createOrganizationEnvironmentVariables(octokit: Octokit, organization_name: string, vars: repo_variable_info[]): Promise<void> {
+  for (const var_info of vars) {
+    createOrganizationEnvironmentVariable(octokit, organization_name, var_info);
+  }
+}
+
+export async function createOrganizationEnvironmentVariable(octokit: Octokit, organization_name: string, var_info: repo_variable_info): Promise<void> {
+  await octokit.request(`POST /orgs/${organization_name}/actions/variables`, {
+    org: 'ORG',
+    name: var_info.name,
+    value: var_info.value,
+    visibility: 'private',
+    headers: {
+      'X-GitHub-Api-Version': '2022-11-28'
+    }
+  });
+}
+
+export async function updateOrganizationEnvironmentVariables(octokit: Octokit, organization_name: string, vars: repo_variable_info[]): Promise<void> {
+  for (const var_info of vars) {
+    updateOrganizationEnvironmentVariable(octokit, organization_name, var_info);
+  }
+}
+
+export async function updateOrganizationEnvironmentVariable(octokit: Octokit, organization_name: string, var_info: repo_variable_info): Promise<void> {
+  await octokit.request(`PATCH /orgs/${organization_name}/actions/variables/${var_info.name}`, {
+    org: 'ORG',
+    name: var_info.name,
+    value: var_info.value,
+    visibility: 'private',
+    headers: {
+      'X-GitHub-Api-Version': '2022-11-28'
+    }
+  })
+}
+
 export function getOrganizationReposToUpdate(repos: github_repo_info[], repo_property_values: RepositoryPropertyValues): github_repo_info[] {
     const repos_to_update: github_repo_info[] = [];
   
@@ -193,6 +260,14 @@ export async function getOrganizationRepositories(octokit: Octokit, organization
   export type public_key_info = {
       key_id: string,
       key: string
+  }
+
+  export type environment_variable = {
+    name: string,
+    value: any,
+    created_at: string,
+    updated_at: string,
+    visibility: string,
   }
   
   export class RepositoryPublicKeyInfoCollection {
