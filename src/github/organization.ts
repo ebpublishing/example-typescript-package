@@ -1,5 +1,5 @@
 import { Octokit } from "octokit";
-import { environment_variable, github_repo_info, public_key_info, repo_variable_info } from "./github_types";
+import { environment_variable, github_repo_info, public_key_info, repo_variable_info, self_hosted_runner } from "./github_types";
 
 export class Organization {
   private _octokit: Octokit;
@@ -103,5 +103,17 @@ export class Organization {
     });
 
     return results.data;
+  }
+
+  public async getSelfHostedRunners(organization_name: string): Promise<self_hosted_runner[]> {
+    // https://docs.github.com/en/rest/actions/self-hosted-runners?apiVersion=2022-11-28#list-self-hosted-runners-for-an-organization
+    const results = await this._octokit.request(`GET /orgs/${organization_name}/actions/runners`, {
+      org: 'ORG',
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    });
+
+    return results.data.runners;
   }
 }

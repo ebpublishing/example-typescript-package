@@ -20,3 +20,18 @@ export type environment_variable = {
   updated_at: string,
   visibility: string,
 }
+
+export type label = {
+  id: number,
+  name: string,
+  type: string,
+}
+
+export type self_hosted_runner = {
+  id: number,
+  name: string,
+  os: string,
+  status: string,
+  busy: boolean,
+  labels: label[],
+}
