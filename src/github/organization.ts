@@ -1,11 +1,16 @@
 import { Octokit } from "octokit";
 import { environment_variable, github_repo_info, public_key_info, repo_variable_info, self_hosted_runner } from "./github_types";
+import { SelfHostedRunner } from "./self_hosted_runner";
 
 export class Organization {
   private _octokit: Octokit;
+  private _self_hosted_runner: SelfHostedRunner;
 
-  constructor(octokit: Octokit) {
+  constructor(
+    octokit: Octokit,
+    self_hosted_runner: SelfHostedRunner) {
     this._octokit = octokit;
+    this._self_hosted_runner = self_hosted_runner;
   }
 
   public async setEnvironmentVariables(organization_name: string, vars: repo_variable_info[]): Promise<void> {
@@ -115,5 +120,13 @@ export class Organization {
     });
 
     return results.data.runners;
+  }
+
+  public async setLabelsForSelfHostedRunners(organization_name: string, self_hosted_runner_names: string[], labels: string[]) {
+    const self_hosted_runners = await this.getSelfHostedRunners(organization_name);
+    const runner_ids_to_update = self_hosted_runners
+                                  .filter((runner) => self_hosted_runner_names.includes(runner.name))
+                                  .map((runner) => runner.id);
+    this._self_hosted_runner.setCustomLabelsForRunners(organization_name, runner_ids_to_update, labels);
   }
 }
