@@ -42,6 +42,10 @@ export class Repository {
         'X-GitHub-Api-Version': '2022-11-28'
       }
     });
+
+    console.log(`createEnvironment: ${repository_name},   `.repeat(4));
+    console.log(JSON.stringify(response));
+    console.log(`createEnvironment: ${repository_name},   `.repeat(4));
   }
         
   public async getEnvironmentPublicKeys(organization_name: string, repositories: github_repo_info[], environment_name: string): Promise<RepositoryPublicKeyInfoCollection> {
