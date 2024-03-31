@@ -38,6 +38,13 @@ export class Repository {
         
   public async createEnvironment(organization_name: string, repository_name: string, environment_name: string) {
     const response = await this._octokit.request(`PUT /repos/${organization_name}/${repository_name}/environments/${environment_name}`, {
+      owner: 'OWNER',
+      repo: 'REPO',
+      environment_name: 'ENVIRONMENT_NAME',
+      wait_timer: 0,
+      prevent_self_review: false,
+      reviewers: null,
+      deployment_branch_policy: null,
       headers: {
         'X-GitHub-Api-Version': '2022-11-28'
       }
