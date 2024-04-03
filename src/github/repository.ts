@@ -37,6 +37,7 @@ export class Repository {
   }
         
   public async createEnvironment(organization_name: string, repository_name: string, environment_name: string) {
+    // https://docs.github.com/en/rest/deployments/environments?apiVersion=2022-11-28#create-or-update-an-environment
     const response = await this._octokit.request(`PUT /repos/${organization_name}/${repository_name}/environments/${environment_name}`, {
       wait_timer: 0,
       prevent_self_review: false,
