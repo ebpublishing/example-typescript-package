@@ -42,10 +42,6 @@ export class Repository {
       wait_timer: 1,
       prevent_self_review: false,
       reviewers: null,
-      deployment_branch_policy: {
-        protected_branches: true,
-        custom_branch_policies: false
-      },
       headers: {
         'X-GitHub-Api-Version': '2022-11-28'
       }
