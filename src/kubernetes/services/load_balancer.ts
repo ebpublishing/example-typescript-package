@@ -1,16 +1,16 @@
-import { V1LoadBalancerIngress, ApiType } from '@kubernetes/client-node';
+import { V1LoadBalancerIngress, ApiType, CoreV1Api } from '@kubernetes/client-node';
 
 export class LoadBalancer {
-  private _apiType: ApiType;
-  constructor(apiType: ApiType) {
-    this._apiType = apiType;
+  private _api: CoreV1Api;
+  constructor(api: CoreV1Api) {
+    this._api = api;
   }
   
   public async getLoadBalancerName(serviceName: string): Promise<string> {
     let loadBalancerHostName : string | undefined;
 
     console.log("GOT HERE INSIDE GETLOADBALANCERNAME");
-    await this._apiType.listNamespacedService('default', 'true' ).then((res) => {
+    await this._api.listNamespacedService('default', 'true' ).then((res) => {
         const objs = res.body.items.filter((obj) => obj?.metadata?.name === serviceName);
         console.log(`NUMBER OF OBS RETURNED FROM K8S API ${objs.length}`);
         if (objs.length == 1) {

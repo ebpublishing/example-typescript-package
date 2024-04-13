@@ -27,6 +27,9 @@ export class Route53 {
   }
 
   async updateHostedZoneRecord(hostedZoneId: string, recordName: string, loadBalancerDnsName: string, aliasHostedZoneId: string): Promise<any> {
+    console.log("WM".repeat(20));
+    console.log(`hostedZoneId: ${hostedZoneId}, recordName: ${recordName}, loadBalancerDnsName: ${loadBalancerDnsName}, aliasHostedZoneId: ${aliasHostedZoneId}`);
+    console.log("WM".repeat(20));
     const input = { // ChangeResourceRecordSetsRequest
         HostedZoneId: hostedZoneId, // required
         ChangeBatch: { // ChangeBatch
