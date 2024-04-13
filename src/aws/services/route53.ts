@@ -1,4 +1,4 @@
-import { Route53Client, ListHostedZonesCommand, ChangeResourceRecordSetsCommand } from "@aws-sdk/client-route-53"
+import { Route53Client, ListHostedZonesCommand, ChangeResourceRecordSetsCommand, ChangeAction } from "@aws-sdk/client-route-53"
 
 export class Route53 {
   private _client: Route53Client;
@@ -35,7 +35,7 @@ export class Route53 {
         ChangeBatch: { // ChangeBatch
           Changes: [ // Changes // required
             { // Change
-              Action: "UPSERT", // required
+              Action: "UPSERT" as ChangeAction, // required
               ResourceRecordSet: { // ResourceRecordSet
                 Name: recordName, // required
                 Type: "A", // required
