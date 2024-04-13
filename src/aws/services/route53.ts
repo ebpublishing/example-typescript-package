@@ -1,4 +1,4 @@
-import { Route53Client, ListHostedZonesCommand, ChangeResourceRecordSetsCommand, ChangeAction } from "@aws-sdk/client-route-53"
+import { Route53Client, ListHostedZonesCommand, ChangeResourceRecordSetsCommand, ChangeAction, RRType } from "@aws-sdk/client-route-53"
 
 export class Route53 {
   private _client: Route53Client;
@@ -38,7 +38,7 @@ export class Route53 {
               Action: "UPSERT" as ChangeAction, // required
               ResourceRecordSet: { // ResourceRecordSet
                 Name: recordName, // required
-                Type: "A", // required
+                Type: "A" as RRType, // required
                 AliasTarget: { // AliasTarget
                     HostedZoneId: aliasHostedZoneId, // required
                     DNSName: loadBalancerDnsName, // required
