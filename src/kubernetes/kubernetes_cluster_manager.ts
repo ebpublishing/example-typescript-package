@@ -5,6 +5,7 @@ export class KubernetesClusterManager {
   readonly Services: Services;
   constructor() {
     const kc = new KubeConfig();
+    kc.loadFromDefault();
     const k8sApi: CoreV1Api = kc.makeApiClient(CoreV1Api);
     this.Services = new Services(k8sApi);
   }
