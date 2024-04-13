@@ -1,6 +1,6 @@
 {
   "name": "example-typescript-package",
-  "version": "0.2.24",
+  "version": "0.2.25",
   "description": "",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -60,6 +60,10 @@
     "@types/node": "^20.11.30",
     "@typescript-eslint/eslint-plugin": "^4.31.1",
     "@typescript-eslint/parser": "^4.31.1",
+    "@aws-sdk/client-elastic-load-balancing": "^3.414.0",
+    "@aws-sdk/client-elastic-load-balancing-v2": "^3.414.0",
+    "@aws-sdk/client-route-53": "^3.414.0",
+    "@kubernetes/client-node": "^0.18.1",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
