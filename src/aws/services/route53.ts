@@ -14,8 +14,8 @@ export class Route53 {
     console.log("**LIST HOSTED ZONES**");
     const response = await this._client.send(command);
     const obj = response.HostedZones?.filter((obj) => obj.Name === `${hostedZoneName}.`);
-    if (obj?.length == 1) {
-      hostedZoneId = obj[0].Id?.split("/")[2];
+    if (obj?.length == 1 && obj[0].Id) {
+      hostedZoneId = obj[0].Id.split("/")[2];
       //console.log(id);
       console.log("**UPDATING HOSTED ZONE RECORDS*");
       //updatedHostedZoneResponse = await updateHostedZoneRecord(client, broydenHostedZoneId as string, `${subdomain}.${hostedZoneName}`, loadBalancerHostName as string, loadBalancerHostedZoneId);
