@@ -11,9 +11,12 @@ export class Route53 {
     
     const command = new ListHostedZonesCommand({});
 
-    console.log("**LIST HOSTED ZONES**");
+    console.log("**LIST HOSTED ZONES1**");
     const response = await this._client.send(command);
+    console.log("**LIST HOSTED ZONES2**");
+    console.log(JSON.stringify(response, undefined, 4));
     const obj = response.HostedZones?.filter((obj) => obj.Name === `${hostedZoneName}.`);
+    console.log("**LIST HOSTED ZONES3**");
     console.log(';'.repeat(100));
     console.log(JSON.stringify(obj, undefined, 4));
     console.log(';'.repeat(100));
