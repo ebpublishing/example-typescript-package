@@ -1,6 +1,6 @@
 {
   "name": "example-typescript-package",
-  "version": "0.2.36",
+  "version": "0.2.37",
   "description": "",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
