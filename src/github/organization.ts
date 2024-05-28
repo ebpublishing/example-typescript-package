@@ -69,7 +69,7 @@ export class Organization {
   }
 
   async createOrUpdateOrganizationSecret(organization_name: string, variable_name: string, encrypted_variable_value: string, key_id: string): Promise<void> {
-    await this._octokit.request(`GET /orgs/${organization_name}/actions/secrets/${variable_name}`, {
+    await this._octokit.request(`PUT /orgs/${organization_name}/actions/secrets/${variable_name}`, {
       encrypted_value: encrypted_variable_value,
       key_id: key_id,
       visibility: 'private',
