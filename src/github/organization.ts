@@ -1,6 +1,8 @@
 import { Octokit } from "octokit";
 import { environment_variable, github_repo_info, public_key_info, repo_variable_info, self_hosted_runner } from "./github_types";
 import { SelfHostedRunner } from "./self_hosted_runner";
+import { getOrganizatonPublicKey } from "../github";
+import { encrypt } from "../encrypt";
 
 export class Organization {
   private _octokit: Octokit;
@@ -53,6 +55,24 @@ export class Organization {
       org: 'ORG',
       name: var_info.name,
       value: var_info.value,
+      visibility: 'private',
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    });
+  }
+
+  async setOrganizationSecret(organization_name: string, variable_name: string, variable_value: string): Promise<void> {
+    const public_key_info = await this.getPublicKey(organization_name);
+    const encrypted_value = await encrypt(variable_value, public_key_info.key);
+    this.createOrUpdateOrganizationSecret(organization_name, variable_name, encrypted_value, public_key_info.key_id);
+  }
+
+  async createOrUpdateOrganizationSecret(organization_name: string, variable_name: string, encrypted_variable_value: string, key_id: string): Promise<void> {
+    await this._octokit.request(`POST /orgs/${organization_name}/actions/secrets/${variable_name}`, {
+      org: 'ORG',
+      encrypted_value: encrypted_variable_value,
+      key_id: key_id,
       visibility: 'private',
       headers: {
         'X-GitHub-Api-Version': '2022-11-28'
