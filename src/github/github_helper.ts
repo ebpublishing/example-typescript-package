@@ -11,8 +11,9 @@ export class GitHubHelper {
   constructor(github_access_token: string) {
     const octokit = new Octokit({ auth: github_access_token });
     const self_hosted_runner = new SelfHostedRunner(octokit);
-    this.Organization = new Organization(octokit, self_hosted_runner);
-    this.Repository = new Repository(octokit);
+    const organization = new Organization(octokit, self_hosted_runner);
+    this.Organization = organization;
+    this.Repository = new Repository(octokit, organization);
     this.SelfHostedRunner = self_hosted_runner;
   }  
 }

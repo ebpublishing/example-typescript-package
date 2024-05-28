@@ -2,12 +2,15 @@ import { Octokit } from "octokit";
 import { github_repo_info, public_key_info, repo_variable_info } from "./github_types";
 import { encrypt } from "../encrypt";
 import { RepositoryPropertyValues, RepositoryPublicKeyInfoCollection } from "./github_classes";
+import { Organization } from "./organization";
 
 export class Repository {
   private _octokit: Octokit;
+  private _organization: Organization;
 
-  constructor(octokit: Octokit) {
+  constructor(octokit: Octokit, organization: Organization) {
     this._octokit = octokit;
+    this._organization = organization;
   }  
         
   public async getCustomProperties(organization_name: string): Promise<RepositoryPropertyValues> {
@@ -75,6 +78,12 @@ export class Repository {
       //console.log(results);
   
     return results.data;
+  }
+
+  public async setEnvironmentVariableByOrganizationAndRepoName(organization_name: string, repo_name: string, environment_name: string, variable_name: string, variable_value: string) {
+    const repo = await this._organization.getOrganizationRepository(organization_name, repo_name);
+    const repos = [repo];
+    this.createEnvironmentVariables(repos, environment_name, variable_name, variable_value);
   }
   
   public async createEnvironmentVariables(repos: github_repo_info[], environment_name: string, variable_name: string, variable_value: string) {

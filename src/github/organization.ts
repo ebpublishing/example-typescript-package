@@ -96,6 +96,12 @@ export class Organization {
       }
     });
   }
+
+  public async getOrganizationRepository(organization_name: string, repository_name: string): Promise<github_repo_info> {
+    const repos: github_repo_info[] = await this.getRepositories(organization_name);
+    const matching_repos = repos.filter((repo) => repo.name == repository_name);
+    return matching_repos[0];
+  }
         
   public async getRepositories(organization_name: string): Promise<github_repo_info[]> {
     const repos: github_repo_info[] = [];
