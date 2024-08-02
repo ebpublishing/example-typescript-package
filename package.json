@@ -1,6 +1,6 @@
 {
   "name": "example-typescript-package",
-  "version": "0.2.41",
+  "version": "0.2.42",
   "description": "",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -63,6 +63,7 @@
     "@aws-sdk/client-elastic-load-balancing": "^3.414.0",
     "@aws-sdk/client-elastic-load-balancing-v2": "^3.414.0",
     "@aws-sdk/client-route-53": "^3.414.0",
+    "@aws-sdk/client-resource-groups-tagging-api":"^3.622.0",
     "@kubernetes/client-node": "^0.18.1",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",

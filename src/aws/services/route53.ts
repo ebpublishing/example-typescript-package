@@ -11,20 +11,11 @@ export class Route53 {
     
     const command = new ListHostedZonesCommand({});
 
-    console.log("**LIST HOSTED ZONES1**");
     const response = await this._client.send(command);
-    console.log("**LIST HOSTED ZONES2**");
-    console.log(JSON.stringify(response, undefined, 4));
     const obj = response.HostedZones?.filter((obj) => obj.Name === `${hostedZoneName}.`);
-    console.log("**LIST HOSTED ZONES3**");
-    console.log(';'.repeat(100));
-    console.log(JSON.stringify(obj, undefined, 4));
-    console.log(';'.repeat(100));
+    
     if (obj?.length == 1 && obj[0].Id) {
       hostedZoneId = obj[0].Id.split("/")[2];
-      //console.log(id);
-      console.log("**UPDATING HOSTED ZONE RECORDS*");
-      //updatedHostedZoneResponse = await updateHostedZoneRecord(client, broydenHostedZoneId as string, `${subdomain}.${hostedZoneName}`, loadBalancerHostName as string, loadBalancerHostedZoneId);
     } else {
       throw new Error(`Error in method: getHostedZoneId, ${hostedZoneName}`);
     }
@@ -33,9 +24,6 @@ export class Route53 {
   }
 
   async updateHostedZoneRecord(hostedZoneId: string, recordName: string, loadBalancerDnsName: string, aliasHostedZoneId: string): Promise<any> {
-    console.log("WM".repeat(20));
-    console.log(`hostedZoneId: ${hostedZoneId}, recordName: ${recordName}, loadBalancerDnsName: ${loadBalancerDnsName}, aliasHostedZoneId: ${aliasHostedZoneId}`);
-    console.log("WM".repeat(20));
     const input = { // ChangeResourceRecordSetsRequest
         HostedZoneId: hostedZoneId, // required
         ChangeBatch: { // ChangeBatch
@@ -56,12 +44,9 @@ export class Route53 {
         },
       };
 
-    console.log("***ChangeResourceRecordSetsCommandInput***");
-    console.log(JSON.stringify(input));
-    console.log("***ChangeResourceRecordSetsCommandInput***");
     const command = new ChangeResourceRecordSetsCommand(input);
     const response = await this._client.send(command);
-    console.log(JSON.stringify(response));
+    
     return response;
   }
 }
