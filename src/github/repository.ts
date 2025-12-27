@@ -142,7 +142,8 @@ export class Repository {
   public async hasEnvironmentVariables(variable_name: string, repository_id: number, environment_name: string): Promise<boolean> {
     try {
       const variables = await this.getEnvironmentVariables(repository_id, environment_name);
-      const results = variables.filter((obj) => obj.name === variable_name);
+      const upper_cased_var_name = variable_name.toUpperCase()
+      const results = variables.filter((obj) => obj.name.toUpperCase() === upper_cased_var_name);
   
       console.log(`
         hasEnvironmentVariables
