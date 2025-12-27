@@ -144,8 +144,17 @@ export class Repository {
       const variables = await this.getEnvironmentVariables(repository_id, environment_name);
       const results = variables.filter((obj) => obj.name === variable_name);
   
+      console.log(`
+        hasEnvironmentVariables
+      variable_name = ${variable_name},
+      results = ${JSON.stringify(results)};
+    `);
       return results.length == 1;
     } catch (error) {
+      console.log(`
+        hasEnvironmentVariables
+      errormessage = ${error}
+    `);
       return false;
     }
   }
