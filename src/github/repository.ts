@@ -156,6 +156,10 @@ export class Repository {
           'X-GitHub-Api-Version': '2022-11-28'
         }
     });
+
+    console.log(`
+      getEnvironmentVariables = ${JSON.stringify(results)}
+    `);
     
     return results.data.variables;
   }
