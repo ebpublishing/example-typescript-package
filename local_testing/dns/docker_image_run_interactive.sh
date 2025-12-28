@@ -12,9 +12,9 @@ read_properties()
   done < "$file"
 }
 
-read_properties $BROYDEN_HOME/config/aws/ebpublishing-admanager-pkg-testing.settings
+read_properties $BROYDEN_HOME/config/aws/ebpublishing-admanager-pkg-staging.settings
 
-docker run -it --entrypoint "/bin/bash" -v $PWD:/broyden \
+docker run -it --entrypoint "/bin/bash" -v $PWD../../..:/broyden \
     -v ./../../src:/broyden/ts/src \
     --workdir /broyden \
     -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \

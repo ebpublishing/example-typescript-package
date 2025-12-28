@@ -1,0 +1,21 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.958.0",
+    "@aws-sdk/client-elastic-load-balancing": "^3.414.0",
+    "@aws-sdk/client-elastic-load-balancing-v2": "^3.414.0",
+    "@aws-sdk/client-route-53": "^3.414.0",
+    "@aws-sdk/client-resource-groups-tagging-api":"^3.622.0",
+    "@kubernetes/client-node": "^0.18.1",
+    "octokit": "^2.0.14"
+  }
+}
