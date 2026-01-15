@@ -14,17 +14,17 @@ export class LoadBalancing {
     const command = new DescribeLoadBalancersCommand(input);
     const LoadBalancers = await this._client.send(command);
     console.log("********************************");
-    console.log(JSON.stringify(LoadBalancers));
+    console.log(JSON.stringify(LoadBalancers,null,4));
     console.log("********************************");
-    // const lbs = LoadBalancers.LoadBalancerDescriptions;
+    const lbs = LoadBalancers.LoadBalancers;
     
-    // if (lbs) {
-    //     const matches = lbs.filter((lb) => lb.DNSName === loadBalancerDnsName);
-    //     console.log(matches.length);
-    //     if (matches.length == 1) {
-    //         hostZoneNameId = matches[0].CanonicalHostedZoneNameID as string;
-    //     }
-    // }
+    if (lbs) {
+        const matches = lbs.filter((lb) => lb.DNSName === loadBalancerDnsName);
+        console.log(matches.length);
+        if (matches.length == 1) {
+            hostZoneNameId = matches[0].CanonicalHostedZoneId as string;
+        }
+    }
   
     return hostZoneNameId;
   }

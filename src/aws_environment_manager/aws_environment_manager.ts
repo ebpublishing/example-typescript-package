@@ -13,8 +13,11 @@ export class AwsEnvironmentManager {
 
     async associateKubernetesLoadBalancerServiceToHostedZoneSubdomain(serviceName: string, hostedZoneName: string, subdomain: string) {
         const loadBalancerHostName = await this._kubernetesClusterManager.Services.LoadBalancer.getLoadBalancerName(serviceName);
+        //console.log(`loadBalancerHostName=${loadBalancerHostName}`);
         const canonicalHostedZoneNameId = await this._awsAccountsManager.Services.LoadBalancing.getCanonicalHostedZoneNameId(loadBalancerHostName);
+        //console.log(`canonicalHostedZoneNameId=${canonicalHostedZoneNameId}`);
         const hostedZoneId = await this._awsAccountsManager.Services.Route53.getHostedZoneId(hostedZoneName);
+        console.log(`hostedZoneId=${hostedZoneId}`);
         await this._awsAccountsManager.Services.Route53.updateHostedZoneRecord(hostedZoneId, `${subdomain}.${hostedZoneName}`, loadBalancerHostName, canonicalHostedZoneNameId);
     }
 
