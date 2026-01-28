@@ -12,6 +12,41 @@ export class Repository {
     this._octokit = octokit;
     this._organization = organization;
   }  
+
+  public setEnvironmentSecret = async ({
+    organization,
+    repositories,
+    environment_name,
+    secret_key,
+    secret_value,
+  }: {
+    organization: string, 
+    repositories: github_repo_info[], 
+    environment_name: string,
+    secret_key: string,
+    secret_value: string}): Promise<void> => {
+    console.log('&^%'.repeat(20));
+    console.log('GOT HERE!!!!!!!!');
+    console.log('&^%'.repeat(20));
+    
+      for (const repository of repositories) {
+        console.log('<==>'.repeat(20));
+        console.log(repository);
+        console.log('<==>'.repeat(20));
+        await this.createEnvironment(
+          organization,
+          repository.name,
+          environment_name,
+        );
+        const respository_public_key_info = await this.getEnvironmentPublicKeys(organization, [repository], environment_name);
+        const key = respository_public_key_info.get(repository.name);
+                  
+        if (key?.key) {
+          const encrypted_value = await encrypt(secret_value, key.key);
+          await this.createEnvironmentSecret(repository, environment_name, secret_key, encrypted_value, key.key_id);
+        }
+      }
+    };
         
   public async getCustomProperties(organization_name: string): Promise<RepositoryPropertyValues> {
     const properties = new RepositoryPropertyValues();
@@ -69,16 +104,42 @@ export class Repository {
   
   public async getEnvironmentPublicKey(organization_name: string, repository_name: string, environment_name: string): Promise<public_key_info> {
     // https://docs.github.com/en/rest/actions/secrets?apiVersion=2022-11-28#get-an-environment-public-key
-    const results = await this._octokit.request(`GET /repos/${organization_name}/${repository_name}/environments/${environment_name}/secrets/public-key`, {
-        headers: {
-          'X-GitHub-Api-Version': '2022-11-28'
-        }
+    const results = await this._octokit.request('GET /repos/{owner}/{repo}/environments/{environment_name}/secrets/public-key', {
+          owner: organization_name,
+          repo: repository_name,
+          environment_name: environment_name,
+          headers: {
+            'X-GitHub-Api-Version': '2022-11-28'
+          }
       })
-  
-      //console.log(results);
+      console.log('******************************************************');
+      console.log(results);
+      console.log('******************************************************');
   
     return results.data;
   }
+
+  // public async getEnvironmentPublicKey(organization_name: string, repository_name: string, environment_name: string): Promise<public_key_info> {
+  //   // https://docs.github.com/en/rest/actions/secrets?apiVersion=2022-11-28#get-an-environment-public-key
+  //   const results = await this._octokit.rest.actions.getEnvironmentPublicKey({
+  //     repository_id: 75964224199,
+  //     owner: organization_name,
+  //     repo: repository_name,
+  //     environment_name: environment_name,
+  //   });
+  //   // const results = await this._octokit.request(`GET /repos/${organization_name}/${repository_name}/actions/secrets/public-key'`, {
+  //   //       owner: 'OWNER',
+  //   //       repo: 'REPO',
+  //   //       headers: {
+  //   //         'X-GitHub-Api-Version': '2022-11-28'
+  //   //       }
+  //   //   })
+  //     console.log('******************************************************');
+  //     console.log(results);
+  //     console.log('******************************************************');
+  
+  //   return results.data;
+  // }
 
   public async setEnvironmentVariableByOrganizationAndRepoName(organization_name: string, repo_name: string, environment_name: string, variable_name: string, variable_value: string) {
     const repo = await this._organization.getOrganizationRepository(organization_name, repo_name);
