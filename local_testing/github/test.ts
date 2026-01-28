@@ -18,13 +18,13 @@ const getOrganizationReposToUpdate = (repos: github_repo_info[], repo_property_v
 
 
 (async () => {
-    const token = ''; //process.env.GH_ACCESS_TOKEN;
+    const token = process.env.GH_ACCESS_TOKEN;
     console.log(`process.env.GH_ACCESS_TOKEN=${token}`);
     if (token) {
         const organization = 'ebpublishing';
         const repository_name = 'ebpublishing-admanager-aws-iam';
-        const environment_name = 'MikeTest123';
-        const secret_key = 'MYSECRETKEY123';
+        const environment_name = 'MikeTest1234';
+        const secret_key = 'MYSECRETKEY1234';
         const secret = 'MYSECRETVALUE';
         const helper = new GitHubHelper(token);
         const repositories = await helper.Organization.getRepositories(organization);

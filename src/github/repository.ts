@@ -24,15 +24,8 @@ export class Repository {
     repositories: github_repo_info[], 
     environment_name: string,
     secret_key: string,
-    secret_value: string}): Promise<void> => {
-    console.log('&^%'.repeat(20));
-    console.log('GOT HERE!!!!!!!!');
-    console.log('&^%'.repeat(20));
-    
+    secret_value: string}): Promise<void> => {    
       for (const repository of repositories) {
-        console.log('<==>'.repeat(20));
-        console.log(repository);
-        console.log('<==>'.repeat(20));
         await this.createEnvironment(
           organization,
           repository.name,
@@ -85,10 +78,6 @@ export class Repository {
         'X-GitHub-Api-Version': '2022-11-28'
       }
     });
-
-    console.log(`createEnvironment: ${repository_name},   `.repeat(4));
-    console.log(JSON.stringify(response));
-    console.log(`createEnvironment: ${repository_name},   `.repeat(4));
   }
         
   public async getEnvironmentPublicKeys(organization_name: string, repositories: github_repo_info[], environment_name: string): Promise<RepositoryPublicKeyInfoCollection> {
@@ -111,10 +100,7 @@ export class Repository {
           headers: {
             'X-GitHub-Api-Version': '2022-11-28'
           }
-      })
-      console.log('******************************************************');
-      console.log(results);
-      console.log('******************************************************');
+      });
   
     return results.data;
   }

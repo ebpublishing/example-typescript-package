@@ -18,8 +18,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
-          tag_name: "broyden_tag59"
-          release_name: "broyden_release59"
+          tag_name: "broyden_tag60"
+          release_name: "broyden_release60"
           draft: false
           prerelease: false
 
