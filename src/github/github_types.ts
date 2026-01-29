@@ -6,12 +6,12 @@ export type github_repo_info = {
 export type repo_variable_info = {
     name: string;
     value: string;
-}
+};
 
 export type public_key_info = {
     key_id: string,
     key: string
-}
+};
 
 export type environment_variable = {
   name: string,
@@ -19,13 +19,13 @@ export type environment_variable = {
   created_at: string,
   updated_at: string,
   visibility: string,
-}
+};
 
 export type label = {
   id: number,
   name: string,
   type: string,
-}
+};
 
 export type self_hosted_runner = {
   id: number,
@@ -34,4 +34,12 @@ export type self_hosted_runner = {
   status: string,
   busy: boolean,
   labels: label[],
-}
+};
+
+export type environment_value_type = {
+  organization: string,
+  repositories: github_repo_info[],
+  environment_name: string,
+  key: string,
+  value: string,
+};

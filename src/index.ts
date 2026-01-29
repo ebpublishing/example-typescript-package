@@ -7,5 +7,6 @@ import * as github_types from './github/github_types';
 import { GitHubHelper } from './github/github_helper';
 import { SecretsManager } from './aws/secrets_manager';
 import { AwsEnvironmentManager } from './aws_environment_manager/aws_environment_manager';
+import * as selectors from './github/github_custom_properties_selector';
 
-export { Num, encrypt, getProjects, GitHubHelper, github_classes, github_types, AwsEnvironmentManager, SecretsManager }
+export { Num, encrypt, getProjects, GitHubHelper, github_classes, github_types, AwsEnvironmentManager, SecretsManager, selectors }

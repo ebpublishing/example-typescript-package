@@ -2,6 +2,7 @@ import { encrypt } from "../../src/encrypt";
 import { RepositoryPropertyValues } from "../../src/github/github_classes";
 import { GitHubHelper } from "../../src/github/github_helper";
 import { github_repo_info } from "../../src/github/github_types";
+import { selectValueEqualsYes } from "../../src/github/github_custom_properties_selector";
 
 const getOrganizationReposToUpdate = (repos: github_repo_info[], repo_property_values: RepositoryPropertyValues): github_repo_info[] => {
   const repos_to_update: github_repo_info[] = [];
@@ -20,48 +21,34 @@ const getOrganizationReposToUpdate = (repos: github_repo_info[], repo_property_v
 (async () => {
     const token = process.env.GH_ACCESS_TOKEN;
     console.log(`process.env.GH_ACCESS_TOKEN=${token}`);
-    if (token) {
-        const organization = 'ebpublishing';
-        const repository_name = 'ebpublishing-admanager-aws-iam';
-        const environment_name = 'MikeTest1234';
-        const secret_key = 'MYSECRETKEY1234';
-        const secret = 'MYSECRETVALUE';
-        const helper = new GitHubHelper(token);
-        const repositories = await helper.Organization.getRepositories(organization);
-        const repo_property_values = await helper.Repository.getCustomProperties(organization);
-        const results = getOrganizationReposToUpdate(repositories, repo_property_values);
-        console.log(JSON.stringify(results));
-        helper.Repository.setEnvironmentSecret({
+    const organization = 'ebpublishing';
+    const environment_name = 'NewTest123';
+
+    if (!token) {
+        return;
+    }
+    const helper = new GitHubHelper(token);
+    await helper.setEnvironmentVariableBasedOnCustomPropertyValue(
+        {
             organization,
-            repositories: results,
+            property_name: 'REQUIRES_ACCESS_KEY_UPDATE',
+            selector: (property_value: string | undefined): boolean => { return typeof property_value === "string" && property_value === "YES"; },
             environment_name,
-            key: secret_key,
-            value: secret,
-        });
-        //const results = repositories.filter (x => x.name === repository_name)
-            // for (const repository of results) {
-            //     await helper.Repository.createEnvironment(
-            //         organization,
-            //         repository.name,
-            //         environment_name,
-            //     );
-
-            //     console.log(`repository id = ${repository.id}`);
-            //     const respository_public_key_info = await helper.Repository.getEnvironmentPublicKeys(organization, results, environment_name);
-            //     const key = respository_public_key_info.get(repository_name);
-            //     console.log(`public key = ${key?.key}`);
-                
-            //     if (key?.key) {
-            //         const encrypted_value = await encrypt(secret, key.key);
-            //         console.log(`encrypted value = ${encrypted_value}`);
-            //         await helper.Repository.createEnvironmentSecret(repository, environment_name, 'TESTSECRET1', encrypted_value, key.key_id);
-            //     }
-
-            //     await helper.Repository.createEnvironmentVariables([repository], environment_name, 'Test123', 'abcdefghjkl');
-            // }
-        } else {
-            console.log('no results!!!!');
+            key: 'MyTestKey',
+            value: 'MyTestValue',
         }
+    );
+
+    await helper.setEnvironmentSecretBasedOnCustomPropertyValue(
+        {
+            organization,
+            property_name: 'REQUIRES_ACCESS_KEY_UPDATE',
+            selector: selectValueEqualsYes,
+            environment_name,
+            key: 'MyTestSecretKey12',
+            value: 'MyTestValue12',
+        }
+    );
 
     console.log('hello');
     // const manager = new SecretsManager();

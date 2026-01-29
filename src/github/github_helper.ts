@@ -2,7 +2,7 @@ import { Octokit } from "octokit";
 import { Organization } from './organization';
 import { Repository } from './repository';
 import { SelfHostedRunner } from "./self_hosted_runner";
-import { github_repo_info } from "./github_types";
+import { environment_value_type, github_repo_info } from "./github_types";
 import { RepositoryPropertyValues } from "./github_classes";
 
 export class GitHubHelper {
@@ -18,6 +18,91 @@ export class GitHubHelper {
     this.Repository = new Repository(octokit, organization);
     this.SelfHostedRunner = self_hosted_runner;
   }
+
+  public setEnvironmentSecretBasedOnCustomPropertyValue = async ({
+      organization,
+      property_name,
+      selector,
+      environment_name,
+      key,
+      value,
+    }: {
+      organization: string, 
+      property_name: string,
+      selector: (propertyValue: string | undefined) => boolean,
+      environment_name: string,
+      key: string,
+      value: string}): Promise<void> => 
+        this.setEnvironmentSecretOrVariableBasedOnCustomPropertyValue({
+          organization,
+          property_name,
+          selector,
+          updater: this.Repository.setEnvironmentSecret,
+          environment_name,
+          key,
+          value
+        });
+
+  public setEnvironmentVariableBasedOnCustomPropertyValue = async ({
+      organization,
+      property_name,
+      selector,
+      environment_name,
+      key,
+      value,
+    }: {
+      organization: string, 
+      property_name: string,
+      selector: (propertyValue: string | undefined) => boolean,
+      environment_name: string,
+      key: string,
+      value: string}): Promise<void> => 
+        this.setEnvironmentSecretOrVariableBasedOnCustomPropertyValue({
+          organization,
+          property_name,
+          selector,
+          updater: this.Repository.setEnvironmentVariable,
+          environment_name,
+          key,
+          value
+        });
+
+  private setEnvironmentSecretOrVariableBasedOnCustomPropertyValue = async ({
+      organization,
+      property_name,
+      selector,
+      updater,
+      environment_name,
+      key,
+      value,
+    }: {
+      organization: string, 
+      property_name: string,
+      selector: (propertyValue: string | undefined) => boolean,
+      updater: (inputs: environment_value_type) => Promise<void>,
+      environment_name: string,
+      key: string,
+      value: string}): Promise<void> => {    
+        const repos = await this.Organization.getRepositories(organization);
+        const repo_property_values = await this.Repository.getCustomProperties(organization);
+
+        const repos_to_update: github_repo_info[] = [];
+
+        for(const repo of repos) {
+          const property_value = repo_property_values.getPropertyValueForRepository(repo.id, property_name);
+          if (selector(property_value)) {
+            repos_to_update.push(repo);
+          }
+        }
+
+        await updater({
+         organization,
+          repositories: repos_to_update,
+          environment_name,
+          key,
+          value,
+        });
+      };
   
   updateCustomVariableBySelectionCriteria = async (
     {

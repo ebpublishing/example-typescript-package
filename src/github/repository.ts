@@ -1,5 +1,5 @@
 import { Octokit } from "octokit";
-import { github_repo_info, public_key_info, repo_variable_info } from "./github_types";
+import { environment_value_type, github_repo_info, public_key_info, repo_variable_info } from "./github_types";
 import { encrypt } from "../encrypt";
 import { RepositoryPropertyValues, RepositoryPublicKeyInfoCollection } from "./github_classes";
 import { Organization } from "./organization";
@@ -13,58 +13,36 @@ export class Repository {
     this._organization = organization;
   }  
 
-  public setEnvironmentSecret = async ({
-    organization,
-    repositories,
-    environment_name,
-    key,
-    value,
-  }: {
-    organization: string, 
-    repositories: github_repo_info[], 
-    environment_name: string,
-    key: string,
-    value: string}): Promise<void> => {    
-      for (const repository of repositories) {
+  public setEnvironmentSecret = async (inputs: environment_value_type): Promise<void> => {    
+      for (const repository of inputs.repositories) {
         await this.createEnvironment(
-          organization,
+          inputs.organization,
           repository.name,
-          environment_name,
+          inputs.environment_name,
         );
-        const respository_public_key_info = await this.getEnvironmentPublicKeys(organization, [repository], environment_name);
+        const respository_public_key_info = await this.getEnvironmentPublicKeys(inputs.organization, [repository], inputs.environment_name);
         const public_key = respository_public_key_info.get(repository.name);
                   
         if (public_key?.key) {
-          const encrypted_value = await encrypt(value, public_key.key);
-          await this.createEnvironmentSecret(repository, environment_name, key, encrypted_value, public_key.key_id);
+          const encrypted_value = await encrypt(inputs.value, public_key.key);
+          await this.createEnvironmentSecret(repository, inputs.environment_name, inputs.key, encrypted_value, public_key.key_id);
         }
       }
     };
 
-  public setEnvironmentVariable = async ({
-    organization,
-    repositories,
-    environment_name,
-    key,
-    value,
-  }: {
-    organization: string, 
-    repositories: github_repo_info[], 
-    environment_name: string,
-    key: string,
-    value: string}): Promise<void> => {    
-      for (const repository of repositories) {
+  public setEnvironmentVariable = async (inputs: environment_value_type): Promise<void> => {    
+      for (const repository of inputs.repositories) {
         await this.createEnvironment(
-          organization,
+          inputs.organization,
           repository.name,
-          environment_name,
+          inputs.environment_name,
         );
         
         this.createEnvironmentVariables(
           [repository], 
-          environment_name,
-          key,
-          value
+          inputs.environment_name,
+          inputs.key,
+          inputs.value
         );
       }
     };

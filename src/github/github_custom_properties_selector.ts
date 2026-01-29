@@ -1,0 +1,1 @@
+export const selectValueEqualsYes = (property_value: string | undefined): boolean => { return typeof property_value === "string" && property_value === "YES"; };
