@@ -17,14 +17,14 @@ export class Repository {
     organization,
     repositories,
     environment_name,
-    secret_key,
-    secret_value,
+    key,
+    value,
   }: {
     organization: string, 
     repositories: github_repo_info[], 
     environment_name: string,
-    secret_key: string,
-    secret_value: string}): Promise<void> => {    
+    key: string,
+    value: string}): Promise<void> => {    
       for (const repository of repositories) {
         await this.createEnvironment(
           organization,
@@ -32,12 +32,40 @@ export class Repository {
           environment_name,
         );
         const respository_public_key_info = await this.getEnvironmentPublicKeys(organization, [repository], environment_name);
-        const key = respository_public_key_info.get(repository.name);
+        const public_key = respository_public_key_info.get(repository.name);
                   
-        if (key?.key) {
-          const encrypted_value = await encrypt(secret_value, key.key);
-          await this.createEnvironmentSecret(repository, environment_name, secret_key, encrypted_value, key.key_id);
+        if (public_key?.key) {
+          const encrypted_value = await encrypt(value, public_key.key);
+          await this.createEnvironmentSecret(repository, environment_name, key, encrypted_value, public_key.key_id);
         }
+      }
+    };
+
+  public setEnvironmentVariable = async ({
+    organization,
+    repositories,
+    environment_name,
+    key,
+    value,
+  }: {
+    organization: string, 
+    repositories: github_repo_info[], 
+    environment_name: string,
+    key: string,
+    value: string}): Promise<void> => {    
+      for (const repository of repositories) {
+        await this.createEnvironment(
+          organization,
+          repository.name,
+          environment_name,
+        );
+        
+        this.createEnvironmentVariables(
+          [repository], 
+          environment_name,
+          key,
+          value
+        );
       }
     };
         

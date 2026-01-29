@@ -35,8 +35,8 @@ const getOrganizationReposToUpdate = (repos: github_repo_info[], repo_property_v
             organization,
             repositories: results,
             environment_name,
-            secret_key: secret_key,
-            secret_value: secret,
+            key: secret_key,
+            value: secret,
         });
         //const results = repositories.filter (x => x.name === repository_name)
             // for (const repository of results) {
