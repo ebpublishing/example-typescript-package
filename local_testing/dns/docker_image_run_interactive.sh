@@ -12,7 +12,7 @@ read_properties()
   done < "$file"
 }
 
-read_properties $BROYDEN_HOME/config/aws/ebpublishing-admanager-pkg-staging.settings
+read_properties $BROYDEN_HOME/config/aws/aws-ad-manager-dev3.settings
 
 docker run -it --entrypoint "/bin/bash" -v $PWD../../..:/broyden \
     -v ./../../src:/broyden/ts/src \

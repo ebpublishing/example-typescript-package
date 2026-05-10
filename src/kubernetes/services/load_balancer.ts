@@ -14,9 +14,14 @@ export class LoadBalancer {
         const objs = res.body.items.filter((obj) => obj?.metadata?.name === serviceName);
         console.log(`NUMBER OF OBS RETURNED FROM K8S API ${objs.length}`);
         if (objs.length == 1) {
-            
             const obj = objs[0];
+            console.log("*********LOADBALANCEROBJ*********");
+            console.log(JSON.stringify(obj));
+            console.log("*********LOADBALANCEROBJ*********");
             const ingress : V1LoadBalancerIngress[] | undefined = obj?.status?.loadBalancer?.ingress;
+            console.log("*********INGRESS*********");
+            console.log(JSON.stringify(ingress));
+            console.log("*********INGRESS*********");
             if (ingress && ingress.length == 1) {
                 loadBalancerHostName  = ingress[0].hostname;
             }
