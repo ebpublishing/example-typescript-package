@@ -9,6 +9,11 @@ export class LoadBalancer {
   public async getLoadBalancerName(serviceName: string): Promise<string> {
     let loadBalancerHostName : string | undefined;
 
+    
+    console.log("*********LOADBALANCERTEST*********");
+    const test = await this._api.listNamespacedService('default', 'true' );
+    console.log(JSON.stringify(test));
+    console.log("*********LOADBALANCERTEST*********");
     console.log("GOT HERE INSIDE GETLOADBALANCERNAME");
     await this._api.listNamespacedService('default', 'true' ).then((res) => {
         const objs = res.body.items.filter((obj) => obj?.metadata?.name === serviceName);
