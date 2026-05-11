@@ -23,7 +23,7 @@ console.log(`subdomain=${subdomain}`);
     // //await awsEnvironmentManager.associateEksNetworkLoadBalancerServiceToHostedZoneSubdomain(clusterName, loadBalancerServiceName, loadBalancerNamespace, hostedZoneName, subdomain, region);
     // //console.log(results);
 
-    // //await awsEnvironmentManager.associateKubernetesLoadBalancerServiceToHostedZoneSubdomain(loadBalancerServiceName, hostedZoneName, subdomain);
+    await awsEnvironmentManager.associateKubernetesLoadBalancerServiceToHostedZoneSubdomain(loadBalancerServiceName, hostedZoneName, subdomain);
 
     // //const awsEnvironmentManager = new AwsEnvironmentManager();
     // await awsEnvironmentManager.associateKubernetesLoadBalancerServiceToHostedZoneSubdomain(loadBalancerServiceName, hostedZoneName, subdomain);
