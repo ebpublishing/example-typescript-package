@@ -44,6 +44,8 @@ jobs:
           scope: '@ebpublishing'
       - run: npm run addscope
       - name: Publish to GitHub Packages
-        run: npm publish
+        run: |
+          npm i --save-dev @types/ws &&
+          npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GH_TOKEN }}
