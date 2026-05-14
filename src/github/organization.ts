@@ -147,6 +147,19 @@ export class Organization {
     return results.data.runners;
   }
 
+  public async deleteSelfHostedRunners(organization_name: string, runner_id: number): Promise<self_hosted_runner[]> {
+    // https://docs.github.com/en/rest/actions/self-hosted-runners?apiVersion=2022-11-28#list-self-hosted-runners-for-an-organization
+    const results = await this._octokit.request(`DELETE /orgs/${organization_name}/actions/runners/${runner_id}`, {
+      org: 'ORG',
+      runner_id: 'RUNNER_ID',
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    });
+
+    return results.data.runners;
+  }
+
   public async setLabelsForSelfHostedRunners(organization_name: string, self_hosted_runner_names: string[], labels: string[]) {
     const self_hosted_runners = await this.getSelfHostedRunners(organization_name);
     const runner_ids_to_update = self_hosted_runners

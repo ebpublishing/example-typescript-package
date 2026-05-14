@@ -4,6 +4,7 @@ import { Repository } from './repository';
 import { SelfHostedRunner } from "./self_hosted_runner";
 import { environment_value_type, github_repo_info } from "./github_types";
 import { RepositoryPropertyValues } from "./github_classes";
+import { github_types } from "..";
 
 export class GitHubHelper {
   readonly Organization: Organization;
@@ -129,6 +130,16 @@ export class GitHubHelper {
       console.log(">><<".repeat(30));
       await this.Repository.createEnvironments(github_organization_name, repos_to_update, github_environment_name);
       await this.Repository.createEnvironmentVariables(repos_to_update, github_environment_name, variable_name, variable_value);
+  }
+
+  deleteSelfHostedRunner = async(github_organization_name: string, runner_name: string): Promise<void> => {
+    const runners = await this.Organization.getSelfHostedRunners(github_organization_name);
+    const filtered_runner = runners.filter((runner: github_types.self_hosted_runner): runner is github_types.self_hosted_runner => runner.name === runner_name);
+    if (filtered_runner.length == 1) {
+      const runner = filtered_runner[0];
+      const id = runner.id;
+      this.Organization.deleteSelfHostedRunners(github_organization_name, id);
+    }
   }
 
   private getOrganizationReposToUpdate = (

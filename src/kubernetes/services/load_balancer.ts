@@ -15,8 +15,11 @@ export class LoadBalancer {
     // console.log(JSON.stringify(test));
     // console.log("*********LOADBALANCERTEST*********");
     console.log("GOT HERE INSIDE GETLOADBALANCERNAME");
-    await this._api.listNamespacedService('default', 'true' ).then((res) => {
-        const objs = res.body.items.filter((obj) => obj?.metadata?.name === serviceName);
+    await this._api.listNamespacedService('default', 'true' ).then((res: any) => {
+        console.log('RESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRES');
+        console.log(JSON.stringify(res));
+        console.log('RESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRES');
+        const objs:any = res.body.items.filter((obj: any) => obj?.metadata?.name === serviceName);
         console.log(`NUMBER OF OBS RETURNED FROM K8S API ${objs.length}`);
         if (objs.length == 1) {
             const obj = objs[0];
