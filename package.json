@@ -54,6 +54,7 @@
     
   },
   "devDependencies": {
+    "@types/ws": "^8.18.1",
     "@commitlint/cli": "^13.1.0",
     "@commitlint/config-conventional": "^13.1.0",
     "@types/jest": "^30.0.0",
