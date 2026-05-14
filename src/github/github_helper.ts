@@ -134,11 +134,13 @@ export class GitHubHelper {
 
   deleteSelfHostedRunner = async(github_organization_name: string, runner_name: string): Promise<void> => {
     const runners = await this.Organization.getSelfHostedRunners(github_organization_name);
-    const filtered_runner = runners.filter((runner: github_types.self_hosted_runner): runner is github_types.self_hosted_runner => runner.name === runner_name);
-    if (filtered_runner.length == 1) {
-      const runner = filtered_runner[0];
-      const id = runner.id;
-      this.Organization.deleteSelfHostedRunners(github_organization_name, id);
+    if (runners) {
+      const filtered_runner = runners.filter((runner: github_types.self_hosted_runner): runner is github_types.self_hosted_runner => runner.name === runner_name);
+      if (filtered_runner.length == 1) {
+        const runner = filtered_runner[0];
+        const id = runner.id;
+        this.Organization.deleteSelfHostedRunners(github_organization_name, id);
+      }
     }
   }
 

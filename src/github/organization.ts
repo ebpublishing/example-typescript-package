@@ -144,7 +144,7 @@ export class Organization {
       }
     });
 
-    return results.data.runners;
+    return results?.data?.runners;
   }
 
   public async deleteSelfHostedRunners(organization_name: string, runner_id: number): Promise<self_hosted_runner[]> {

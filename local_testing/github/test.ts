@@ -28,27 +28,27 @@ const getOrganizationReposToUpdate = (repos: github_repo_info[], repo_property_v
         return;
     }
     const helper = new GitHubHelper(token);
-    await helper.setEnvironmentVariableBasedOnCustomPropertyValue(
-        {
-            organization,
-            property_name: 'REQUIRES_ACCESS_KEY_UPDATE',
-            selector: (property_value: string | undefined): boolean => { return typeof property_value === "string" && property_value === "YES"; },
-            environment_name,
-            key: 'MyTestKey',
-            value: 'MyTestValue',
-        }
-    );
+    // await helper.setEnvironmentVariableBasedOnCustomPropertyValue(
+    //     {
+    //         organization,
+    //         property_name: 'REQUIRES_ACCESS_KEY_UPDATE',
+    //         selector: (property_value: string | undefined): boolean => { return typeof property_value === "string" && property_value === "YES"; },
+    //         environment_name,
+    //         key: 'MyTestKey',
+    //         value: 'MyTestValue',
+    //     }
+    // );
 
-    await helper.setEnvironmentSecretBasedOnCustomPropertyValue(
-        {
-            organization,
-            property_name: 'REQUIRES_ACCESS_KEY_UPDATE',
-            selector: selectValueEqualsYes,
-            environment_name,
-            key: 'MyTestSecretKey12',
-            value: 'MyTestValue12',
-        }
-    );
+    // await helper.setEnvironmentSecretBasedOnCustomPropertyValue(
+    //     {
+    //         organization,
+    //         property_name: 'REQUIRES_ACCESS_KEY_UPDATE',
+    //         selector: selectValueEqualsYes,
+    //         environment_name,
+    //         key: 'MyTestSecretKey12',
+    //         value: 'MyTestValue12',
+    //     }
+    // );
 
     console.log('hello');
     // const manager = new SecretsManager();
