@@ -15,7 +15,7 @@ export class LoadBalancer {
     // console.log(JSON.stringify(test));
     // console.log("*********LOADBALANCERTEST*********");
     console.log("GOT HERE INSIDE GETLOADBALANCERNAME");
-    await this._api.listNamespacedService('default', 'true' ).then((res: any) => {
+    await this._api.listNamespacedService({namespace: 'default', pretty: 'true'}).then((res: any) => {
         console.log('RESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRES');
         console.log(JSON.stringify(res));
         console.log('RESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRESRES');
