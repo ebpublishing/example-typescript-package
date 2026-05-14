@@ -150,8 +150,6 @@ export class Organization {
   public async deleteSelfHostedRunners(organization_name: string, runner_id: number): Promise<self_hosted_runner[]> {
     // https://docs.github.com/en/rest/actions/self-hosted-runners?apiVersion=2022-11-28#list-self-hosted-runners-for-an-organization
     const results = await this._octokit.request(`DELETE /orgs/${organization_name}/actions/runners/${runner_id}`, {
-      org: 'ORG',
-      runner_id: 'RUNNER_ID',
       headers: {
         'X-GitHub-Api-Version': '2022-11-28'
       }
