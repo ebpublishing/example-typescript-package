@@ -180,6 +180,10 @@ export async function getOrganizationRepositories(octokit: Octokit, organization
       }
     }
   }
+
+  export const createEnvironmentVariableByRepositoryName = (octokit: Octokit, repository_name: number, environment_name: string, variable_name: string, variable_value: string) => {
+    
+  }
   
   export async function createRepositoryEnvironmentVariable(octokit: Octokit, repository_id: number, environment_name: string, variable_name: string, variable_value: string) {
       await octokit.request(`POST /repositories/${repository_id}/environments/${environment_name}/variables`, {
@@ -202,6 +206,10 @@ export async function getOrganizationRepositories(octokit: Octokit, organization
           }
         })
         
+  }
+
+  export const setRepositoryEnvironmentSecret = async (organization: string, repository: string, secret_name: string, secret_value: string): Promise<void> => {
+    console.log("setRepositoryEnvironmentSecret");
   }
   
   export async function createRepositoryEnvironmentSecrets(octokit: Octokit, repos: github_repo_info[], repository_public_key_info: RepositoryPublicKeyInfoCollection, organization_name: string, environment_name: string, secret_name: string, secret_value: string) {

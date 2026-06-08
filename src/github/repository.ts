@@ -11,7 +11,20 @@ export class Repository {
   constructor(octokit: Octokit, organization: Organization) {
     this._octokit = octokit;
     this._organization = organization;
-  }  
+  }
+
+  public setEnvironmentSecretByRepositoryName = async (organization: string, repository: string, environment: string, secret_name: string, secret_value: string): Promise<void> => {
+    const pki = await this.getEnvironmentPublicKey(organization, repository, environment);
+    const encrypted_value = await encrypt(secret_value, pki.key);
+    //https://docs.github.com/en/rest/actions/secrets?apiVersion=2022-11-28#create-or-update-an-environment-secret
+    const response = await this._octokit.request(`PUT /repos/${organization}/${repository}/environments/${environment}/secrets/${secret_name}`, {
+      encrypted_value: encrypted_value,
+      key_id: pki.key_id,
+      headers: {
+        'X-GitHub-Api-Version': '2026-03-10'
+      }
+    });
+  }
 
   public setEnvironmentSecret = async (inputs: environment_value_type): Promise<void> => {    
       for (const repository of inputs.repositories) {
@@ -38,8 +51,9 @@ export class Repository {
           inputs.environment_name,
         );
         
-        this.createEnvironmentVariables(
-          [repository], 
+        this.createRepositoryEnvironmentVariable(
+          inputs.organization,
+          repository.name, 
           inputs.environment_name,
           inputs.key,
           inputs.value
@@ -110,63 +124,31 @@ export class Repository {
   
     return results.data;
   }
-
-  // public async getEnvironmentPublicKey(organization_name: string, repository_name: string, environment_name: string): Promise<public_key_info> {
-  //   // https://docs.github.com/en/rest/actions/secrets?apiVersion=2022-11-28#get-an-environment-public-key
-  //   const results = await this._octokit.rest.actions.getEnvironmentPublicKey({
-  //     repository_id: 75964224199,
-  //     owner: organization_name,
-  //     repo: repository_name,
-  //     environment_name: environment_name,
-  //   });
-  //   // const results = await this._octokit.request(`GET /repos/${organization_name}/${repository_name}/actions/secrets/public-key'`, {
-  //   //       owner: 'OWNER',
-  //   //       repo: 'REPO',
-  //   //       headers: {
-  //   //         'X-GitHub-Api-Version': '2022-11-28'
-  //   //       }
-  //   //   })
-  //     console.log('******************************************************');
-  //     console.log(results);
-  //     console.log('******************************************************');
   
-  //   return results.data;
-  // }
-
-  public async setEnvironmentVariableByOrganizationAndRepoName(organization_name: string, repo_name: string, environment_name: string, variable_name: string, variable_value: string) {
-    const repo = await this._organization.getOrganizationRepository(organization_name, repo_name);
-    const repos = [repo];
-    this.createEnvironmentVariables(repos, environment_name, variable_name, variable_value);
-  }
-  
-  public async createEnvironmentVariables(repos: github_repo_info[], environment_name: string, variable_name: string, variable_value: string) {
-    for(const repo of repos) {
-      if(await this.hasEnvironmentVariables(variable_name, repo.id, environment_name)) {
-        this.updateEnvironmentVariable(repo.id, environment_name,variable_name, variable_value);
+  public async createRepositoryEnvironmentVariable(organization: string, repo: string, environment_name: string, variable_name: string, variable_value: string) {
+      if(await this.hasEnvironmentVariables(organization, variable_name, repo, environment_name)) {
+        this.updateEnvironmentVariable(organization, repo, environment_name,variable_name, variable_value);
       } else {
-        this.createEnvironmentVariable(repo.id, environment_name,variable_name, variable_value);
+        this.createEnvironmentVariable(organization, repo, environment_name,variable_name, variable_value);
       }
-    }
   }
   
-  public async createEnvironmentVariable(repository_id: number, environment_name: string, variable_name: string, variable_value: string) {
-    await this._octokit.request(`POST /repositories/${repository_id}/environments/${environment_name}/variables`, {
-      repository_id: 'REPOSITORY_ID',
-      environment_name: 'ENVIRONMENT_NAME',
+  public async createEnvironmentVariable(organization: string, repository: string, environment_name: string, variable_name: string, variable_value: string) {
+    await this._octokit.request(`POST /repos/${organization}/${repository}/environments/${environment_name}/variables`, {
       name: variable_name,
       value: variable_value,
       headers: {
-        'X-GitHub-Api-Version': '2022-11-28'
+        'X-GitHub-Api-Version': '2026-03-10'
       }
     });
   }
   
-  public async updateEnvironmentVariable(repository_id: number, environment_name: string, variable_name: string, variable_value: string) {
-    await this._octokit.request(`PATCH /repositories/${repository_id}/environments/${environment_name}/variables/${variable_name}`, {
+  public async updateEnvironmentVariable(organization: string, repository: string, environment_name: string, variable_name: string, variable_value: string) {
+    await this._octokit.request(`PATCH /repos/${organization}/${repository}/environments/${environment_name}/variables/${variable_name}`, {
       name: variable_name,
       value: variable_value,
       headers: {
-        'X-GitHub-Api-Version': '2022-11-28'
+        'X-GitHub-Api-Version': '2026-03-10'
       }
     });     
   }
@@ -192,17 +174,12 @@ export class Repository {
     });
   }
   
-  public async hasEnvironmentVariables(variable_name: string, repository_id: number, environment_name: string): Promise<boolean> {
+  public async hasEnvironmentVariables(organization: string, variable_name: string, repository: string, environment_name: string): Promise<boolean> {
     try {
-      const variables = await this.getEnvironmentVariables(repository_id, environment_name);
+      const variables = await this.getEnvironmentVariables(organization, repository, environment_name);
       const upper_cased_var_name = variable_name.toUpperCase()
       const results = variables.filter((obj) => obj.name.toUpperCase() === upper_cased_var_name);
   
-      console.log(`
-        hasEnvironmentVariables
-      variable_name = ${variable_name},
-      results = ${JSON.stringify(results)};
-    `);
       return results.length == 1;
     } catch (error) {
       console.log(`
@@ -213,16 +190,12 @@ export class Repository {
     }
   }
   
-  public async getEnvironmentVariables(repository_id: number, environment_name: string):Promise<repo_variable_info[]> {
-    const results = await this._octokit.request(`GET /repositories/${repository_id}/environments/${environment_name}/variables?per_page=30`, {
+  public async getEnvironmentVariables(organization: string, repository: string, environment_name: string):Promise<repo_variable_info[]> {
+    const results = await this._octokit.request(`GET /repos/${organization}/${repository}/environments/${environment_name}/variables?per_page=30&page=1`, {
         headers: {
-          'X-GitHub-Api-Version': '2022-11-28'
+          'X-GitHub-Api-Version': '2026-03-10'
         }
     });
-
-    console.log(`
-      getEnvironmentVariables = ${JSON.stringify(results)}
-    `);
     
     return results.data.variables;
   }

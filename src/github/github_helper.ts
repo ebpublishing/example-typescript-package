@@ -129,7 +129,9 @@ export class GitHubHelper {
       console.log(JSON.stringify(repos_to_update));
       console.log(">><<".repeat(30));
       await this.Repository.createEnvironments(github_organization_name, repos_to_update, github_environment_name);
-      await this.Repository.createEnvironmentVariables(repos_to_update, github_environment_name, variable_name, variable_value);
+      for (const repo of repos_to_update) {
+        await this.Repository.createEnvironmentVariable(github_organization_name, repo.name, github_environment_name, variable_name, variable_value);
+      }
   }
 
   deleteSelfHostedRunner = async(github_organization_name: string, runner_name: string): Promise<void> => {

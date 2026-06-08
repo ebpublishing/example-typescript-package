@@ -28,6 +28,8 @@ const getOrganizationReposToUpdate = (repos: github_repo_info[], repo_property_v
         return;
     }
     const helper = new GitHubHelper(token);
+    helper.Repository.setEnvironmentSecretByRepositoryName('ebpublishing', 'ebpublishing-admanager-aws-iam', 'Development', 'AZURE_APP_REGISTRATION_APP_ID', 'test');
+    helper.Repository.createRepositoryEnvironmentVariable('ebpublishing', 'ebpublishing-admanager-aws-iam', 'Development', 'AZURE_APP_REGISTRATION_TENANT_ID', 'test')
     // await helper.setEnvironmentVariableBasedOnCustomPropertyValue(
     //     {
     //         organization,
