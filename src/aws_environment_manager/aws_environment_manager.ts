@@ -21,6 +21,13 @@ export class AwsEnvironmentManager {
         await this._awsAccountsManager.Services.Route53.updateHostedZoneRecord(hostedZoneId, `${subdomain}.${hostedZoneName}`, loadBalancerHostName, canonicalHostedZoneNameId);
     }
 
+    async associateKubernetesLoadBalancerServiceToHostedZoneSubdomainByDnsName(dnsName: string, hostedZoneName: string, subdomain: string) {
+        const canonicalHostedZoneNameId = await this._awsAccountsManager.Services.LoadBalancing.getCanonicalHostedZoneNameId(dnsName);
+        const hostedZoneId = await this._awsAccountsManager.Services.Route53.getHostedZoneId(hostedZoneName);
+        console.log(`hostedZoneId=${hostedZoneId}`);
+        await this._awsAccountsManager.Services.Route53.updateHostedZoneRecord(hostedZoneId, `${subdomain}.${hostedZoneName}`, dnsName, canonicalHostedZoneNameId);
+    }
+
     async associateEksNetworkLoadBalancerServiceToHostedZoneSubdomain(clusterName: string, serviceName: string, loadBalancerNamespace: string, hostedZoneName: string, subdomain: string, region: string) {
       const resourceName = await this.searchForEksClusterLoadBalancerResourceNameByTags(clusterName, serviceName, loadBalancerNamespace, region);
       console.log(resourceName);
