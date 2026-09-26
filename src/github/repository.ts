@@ -126,10 +126,12 @@ export class Repository {
   }
   
   public async createRepositoryEnvironmentVariable(organization: string, repo: string, environment_name: string, variable_name: string, variable_value: string) {
+      // Awaited so failures reach the caller instead of escaping as
+      // unhandled rejections after the process has moved on.
       if(await this.hasEnvironmentVariables(organization, variable_name, repo, environment_name)) {
-        this.updateEnvironmentVariable(organization, repo, environment_name,variable_name, variable_value);
+        await this.updateEnvironmentVariable(organization, repo, environment_name,variable_name, variable_value);
       } else {
-        this.createEnvironmentVariable(organization, repo, environment_name,variable_name, variable_value);
+        await this.createEnvironmentVariable(organization, repo, environment_name,variable_name, variable_value);
       }
   }
   
