@@ -9,22 +9,37 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    # The built-in GITHUB_TOKEN with explicit permissions replaces the
+    # GH_TOKEN repo secret, whose expiry silently broke publishing
+    # ("Bad credentials", 2026-09-26). Nothing here touches other repos,
+    # so no PAT is needed.
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
+      - name: Read package version
+        id: pkg
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: "broyden_tag79"
-          release_name: "broyden_release79"
+          # Tag per version: the previous hardcoded tag could only ever be
+          # created once, so the next publish would have failed on
+          # "already_exists" even with valid credentials.
+          tag_name: "v${{ steps.pkg.outputs.version }}"
+          release_name: "v${{ steps.pkg.outputs.version }}"
           draft: false
           prerelease: false
 
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v7
       - name: Setup .npmrc file to publish to npm
@@ -48,4 +63,4 @@ jobs:
           npm install --save-dev @types/ws
           npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GH_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
