@@ -147,15 +147,16 @@ export class Organization {
     return results?.data?.runners;
   }
 
-  public async deleteSelfHostedRunners(organization_name: string, runner_id: number): Promise<self_hosted_runner[]> {
-    // https://docs.github.com/en/rest/actions/self-hosted-runners?apiVersion=2022-11-28#list-self-hosted-runners-for-an-organization
-    const results = await this._octokit.request(`DELETE /orgs/${organization_name}/actions/runners/${runner_id}`, {
+  public async deleteSelfHostedRunners(organization_name: string, runner_id: number): Promise<void> {
+    // https://docs.github.com/en/rest/actions/self-hosted-runners?apiVersion=2022-11-28#delete-a-self-hosted-runner-from-an-organization
+    // A successful delete returns 204 No Content: there is no body, so
+    // reading results.data.runners here crashed the caller whenever the
+    // deletion actually happened.
+    await this._octokit.request(`DELETE /orgs/${organization_name}/actions/runners/${runner_id}`, {
       headers: {
         'X-GitHub-Api-Version': '2022-11-28'
       }
     });
-
-    return results.data.runners;
   }
 
   public async setLabelsForSelfHostedRunners(organization_name: string, self_hosted_runner_names: string[], labels: string[]) {

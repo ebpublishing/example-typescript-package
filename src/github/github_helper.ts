@@ -141,7 +141,9 @@ export class GitHubHelper {
       if (filtered_runner.length == 1) {
         const runner = filtered_runner[0];
         const id = runner.id;
-        this.Organization.deleteSelfHostedRunners(github_organization_name, id);
+        // Awaited so a failure surfaces here instead of escaping as an
+        // unhandled rejection that kills the process mid-run.
+        await this.Organization.deleteSelfHostedRunners(github_organization_name, id);
       }
     }
   }
